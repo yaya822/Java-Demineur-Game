@@ -1,5 +1,5 @@
 public class Game {
-    private Board board;
+    private  Board board;
     private boolean isGameover;
 
     public Board getBoard() {
@@ -15,21 +15,28 @@ public class Game {
         this.isGameover = isGameover;
     }
 
-    public void start(int x,int y){
-        this.board=new Board(x,y);
-        this.board.generateMins(8);
-        this.board.calculateAdj(0, 0);
+    public   void start(int rows,int cols,int mines){
+        board=new Board(rows,cols);
+        board.generateMins(mines);
+        board.initializeAdjacency();
     }
     
-    public boolean chekWin(){
-        for(int i=0;i<this.board.getRows();i++){
-            for(int j=0;j<this.board.getCols();j++){
-                Cellule cell =this.board.getGrid()[i][j];
+    public boolean checkWin(){
+        int revealedCount = 0;
+
+            for(int i = 0; i < this.board.getRows(); i++) {
+                for(int j = 0; j < this.board.getCols(); j++) {
+                    Cellule cell = this.board.getGrid()[i][j];
+
                     if(!cell.isMine() && !cell.isReveald())
-                            return false;
+                        return false;
+
+                    if(cell.isReveald() && !cell.isMine())
+                        revealedCount++;
+                }
             }
-        }
-        return true;
+
+            return revealedCount > 0;
     }
     public void toggleFlage(int x,int y){
         if(this.board.inBounds(x, y)){
@@ -43,4 +50,40 @@ public class Game {
         }
     }
 
+     public boolean  checkGameOver(){
+        for(int i=0;i<this.board.getRows();i++){
+            for(int j=0;j<this.board.getCols();j++){
+                Cellule cell =this.board.getGrid()[i][j];
+                if(cell.isMine() && cell.isReveald()){
+                    return true;
+                }
+            }
+        }
+        return false ;
+    }
+    public void revealCell(int row, int col){
+        if(!board.inBounds(row, col)) return;
+        Cellule cell = board.getCellule(row, col);
+        if(cell.isReveald() || cell.isFlagged()) return;
+        cell.setReveald(true);
+        if(cell.isEmpty()){
+            for(int i=-1;i<=1;i++){
+                    for(int j=-1;j<=1;j++){
+                        revealCell(row+i, col+j);
+                    }
+                }
+        }
+        if(cell.isMine()){
+            this.setGameover(true);
+            return;
+        }
+        revealCell(row, col);
+    }
+    public Cellule getCellule(int row,int col){
+         return board.getCellule(row, col);
+    }
+    public int getAdjCells(int row,int col){
+        return board.calculateAdj(row, col);
+    }
+    
 }

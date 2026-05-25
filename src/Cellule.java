@@ -7,35 +7,46 @@ public class Cellule {
         public boolean isMine() {
             return isMine;
         }
+
         public void setMine(boolean isMine) {
             this.isMine = isMine;
         }
+
         public boolean isReveald() {
             return isReveald;
         }
+
         public void setReveald(boolean isReveald) {
             this.isReveald = isReveald;
         }
+
         public boolean isFlagged() {
             return isFlagged;
         }
+
         public void setFlagged(boolean isFlagged) {
             this.isFlagged = isFlagged;
         }
+
         public int getAdjacentMines() {
             return adjacentMines;
         }
+        
         public void setAdjacentMines(int adjacentMines) {
             this.adjacentMines = adjacentMines;
         }
         
         public void reveal(){
-            if(!isReveald)
+            if(!isReveald && !isFlagged)
                 this.isReveald=true;
         }
         public void toggleFlage(){
-            if(!isFlagged)
-                this.isFlagged=true;
+            if(!isReveald)
+            this.isFlagged=!this.isFlagged;
+        }
+
+        public boolean isEmpty(){
+            return this.adjacentMines==0 && !this.isMine;
         }
 
 
