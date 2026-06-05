@@ -33,7 +33,7 @@ public class ScoreDAO {
 
         List<Score> scores = new ArrayList<>();
 
-        String sql ="SELECT * FROM Scores"+"where difficulty=?"+ "ORDER BY score DESC"+"LIMIT 10";
+        String sql ="SELECT * FROM scores where difficulty=?ORDER BY score DESC LIMIT 10";
 
         try (
             PreparedStatement stmt =conn.prepareStatement(sql);

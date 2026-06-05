@@ -293,6 +293,36 @@ private Font loadDigitalFont(float size) {
         return new Font("Monospaced", Font.BOLD, Math.round(size));
     }
 }
+    private JScrollPane createRankingTable(String level) {
+    String[] cols = {"#","Score", "Time"};
+    ScoreDAO scoreDao = new ScoreDAO();
+    List<Score> scores = scoreDao.getTop10Scores(level);
+    Object[][] rows = new Object[scores.size()][4];
+    for (int i = 0; i < scores.size(); i++) {
+        rows[i][0] = i + 1;
+        rows[i][1] = scores.get(i).getScore();
+        rows[i][2] = scores.get(i).getTime();
+    }
+    JTable table = new JTable(rows, cols);
+    table.setEnabled(false);
+    return new JScrollPane(table);
+}
+
+   private void showRankingDialog() {
+    JDialog dialog = new JDialog();
+    dialog.setTitle("Top 10 Rankings");
+    dialog.setModal(true);
+    dialog.setSize(500, 450);
+    dialog.setLocationRelativeTo(null);  // centre l'écran
+
+    JTabbedPane tabs = new JTabbedPane();
+    tabs.addTab("Easy",   createRankingTable("easy"));
+    tabs.addTab("Medium", createRankingTable("medium"));
+    tabs.addTab("Hard",   createRankingTable("hard"));
+
+    dialog.add(tabs);
+    dialog.setVisible(true);
+}
     // ══════════════════════════════════════════════════════════════════
     //  CONSTRUCTOR
     // ══════════════════════════════════════════════════════════════════
@@ -316,11 +346,13 @@ private Font loadDigitalFont(float size) {
         titlePanel.setPreferredSize(new Dimension(boardWidth, 50));
         titlePanel.setBackground(gray);
         titlePanel.setBorder(raisedBorder);
-
+        JButton rankingBtn = new JButton(" Top 10");
+        rankingBtn.addActionListener(e->showRankingDialog());
         difficulty.setFont(retro);
         difficulty.setBackground(gray);
         difficulty.setBorder(raisedBorder);
         JPanel dp = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 8));
+        dp.add(rankingBtn);
         dp.setBackground(gray);
         dp.add(difficulty);
 
@@ -641,11 +673,6 @@ btn.setFont(new Font("Courier New", Font.BOLD, Math.min(22, tileSize - 16)));
             gameTimer.stop();
             revealAllMinesOneByOne();
 
-            int finalScore=score- seconds;
-            int finaltime=seconds;
-            Score scoreObj=new Score(finalScore, finaltime,selectedDifficulty);
-            ScoreDAO dao=new ScoreDAO();
-            dao.saveScore(scoreObj);
         }
     }
 
