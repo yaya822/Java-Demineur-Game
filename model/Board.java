@@ -5,7 +5,7 @@ public class Board {
     private int cols;
     private int totalMines;
     
-
+    
     public Board(int rows, int cols) {
         this.rows = rows;
         this.cols = cols;
