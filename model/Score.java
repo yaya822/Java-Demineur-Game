@@ -3,11 +3,12 @@ package model;
 public class Score {
     private int score;
     private int time ;
-    
+    private String difficulty;
 
-    public Score(int score, int time) {
+    public Score(int score, int time,String difficulty) {
         this.score = score;
         this.time = time;
+        this.difficulty=difficulty;
     }
     public int getScore() {
         return score;
@@ -21,5 +22,12 @@ public class Score {
     public void setTime(int time) {
         this.time = time;
     }
+    public String getDifficulty() {
+        return difficulty;
+    }
+    public void setDifficulty(String difficulty) {
+        this.difficulty = difficulty;
+    }
+    
     
 }
