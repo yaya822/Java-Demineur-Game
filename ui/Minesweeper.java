@@ -1,12 +1,13 @@
 package ui;
-import java.awt.*;
-import model.*;
 import game.Game;
+import java.awt.*;
+import java.io.File;
 import java.awt.event.*;
 import java.util.*;
 import java.util.List;
 import javax.swing.*;
 import javax.swing.border.Border;
+import model.*;
 
 public class Minesweeper {
 
@@ -248,7 +249,7 @@ public class Minesweeper {
     private boolean gameEnded    = false;
     private boolean timerStarted = false;
     private int     seconds      = 0;
-    private int     minesLeft    = 10;
+    private int     minesLeft    = 6;
 
     // Board dimensions (recalculated on difficulty change)
     int tileSize    = 70;
@@ -273,6 +274,21 @@ public class Minesweeper {
 
     javax.swing.Timer gameTimer;
 
+private Font loadDigitalFont(float size) {
+    try {
+        Font font = Font.createFont(
+            Font.TRUETYPE_FONT,
+          new File("fonts/digital-dream/DIGITALDREAM.ttf")
+        );
+
+        GraphicsEnvironment.getLocalGraphicsEnvironment().registerFont(font);
+
+        return font.deriveFont(Font.PLAIN, size);
+    } catch (Exception e) {
+        e.printStackTrace();
+        return new Font("Monospaced", Font.BOLD, Math.round(size));
+    }
+}
     // ══════════════════════════════════════════════════════════════════
     //  CONSTRUCTOR
     // ══════════════════════════════════════════════════════════════════
@@ -315,11 +331,11 @@ public class Minesweeper {
         mp.setBackground(gray);
         mp.add(mineCountLabel);
 
-        timerLabel.setFont(new Font("Monospaced", Font.BOLD, 25));
+       timerLabel.setFont(loadDigitalFont(28f));
         timerLabel.setOpaque(true);
         timerLabel.setBackground(Color.BLACK);
         timerLabel.setForeground(Color.RED);
-        timerLabel.setPreferredSize(new Dimension(90, 30));
+      timerLabel.setPreferredSize(new Dimension(115, 35));
         timerLabel.setBorder(loweredBorder);
         JPanel tp = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 8));
         tp.setBackground(gray);
@@ -382,14 +398,28 @@ public class Minesweeper {
         boardPanel.repaint();
     }
 
+    private void updateMinesLeftLabel() {
+    int flaggedCells = 0;
+
+    for (int i = 0; i < rowNum; i++) {
+        for (int j = 0; j < colNum; j++) {
+            Cellule c = game.getCellule(i, j);
+            if (c.isFlagged() && !c.isReveald()) {
+                flaggedCells++;
+            }
+        }
+    }
+
+    mineCountLabel.setText("\uD83D\uDCA3 " + (minesLeft - flaggedCells));
+}
     // ══════════════════════════════════════════════════════════════════
     //  APPLY DIFFICULTY  (called when combo-box changes)
     // ══════════════════════════════════════════════════════════════════
     private void applyDifficulty(String diff) {
         switch (diff) {
-            case "Easy"   -> { rowNum = 8;  colNum = 8;  tileSize = 70; minesLeft = 10; }
-            case "Medium" -> { rowNum = 12; colNum = 12; tileSize = 46; minesLeft = 25; }
-            default       -> { rowNum = 14; colNum = 14; tileSize = 40; minesLeft = 32; }
+         case "Easy"   -> { rowNum = 8;  colNum = 8;  tileSize = 70; minesLeft = 6; }
+case "Medium" -> { rowNum = 12; colNum = 12; tileSize = 46; minesLeft = 16; }
+default       -> { rowNum = 14; colNum = 14; tileSize = 40; minesLeft = 25; }
         }
         boardWidth  = tileSize * colNum;
         boardHeight = tileSize * rowNum;
@@ -403,7 +433,7 @@ public class Minesweeper {
         gameTimer.stop();
 
         // Update header labels
-        mineCountLabel.setText("\uD83D\uDCA3 " + minesLeft);
+        updateMinesLeftLabel();
         timerLabel.setText("00:00");
         titlePanel.setPreferredSize(new Dimension(boardWidth, 50));
 
@@ -419,53 +449,105 @@ public class Minesweeper {
         explosionLayer.clear();
         frame.setLocationRelativeTo(null);
     }
-    private void showGameOverDialog() {
+//     private void showGameOverDialog() {
 
+//     JDialog dialog = new JDialog(frame, "Game Over", true);
+
+//     dialog.setSize(350, 220);
+//     dialog.setLayout(new BorderLayout());
+//     dialog.getContentPane().setBackground(new Color(40, 40, 40));
+
+//     // ===== TITLE =====
+//     JLabel title = new JLabel("💥 GAME OVER 💥", SwingConstants.CENTER);
+
+//     title.setFont(new Font("Arial", Font.BOLD, 28));
+//     title.setForeground(Color.RED);
+
+//     // ===== MESSAGE =====
+//     JLabel msg = new JLabel(
+//         "You stepped on a mine!",
+//         SwingConstants.CENTER
+//     );
+
+//     msg.setFont(new Font("Arial", Font.PLAIN, 18));
+//     msg.setForeground(Color.WHITE);
+
+//     // ===== BUTTON =====
+//     JButton restart = new JButton("Play Again");
+
+//     restart.setFont(new Font("Arial", Font.BOLD, 18));
+
+//     restart.addActionListener(e -> {
+//         dialog.dispose();
+//         applyDifficulty((String)difficulty.getSelectedItem());
+//     });
+
+//     JPanel center = new JPanel(new GridLayout(2,1));
+//     center.setBackground(new Color(40,40,40));
+
+//     center.add(title);
+//     center.add(msg);
+
+//     JPanel south = new JPanel();
+//     south.setBackground(new Color(40,40,40));
+//     south.add(restart);
+
+//     dialog.add(center, BorderLayout.CENTER);
+//     dialog.add(south, BorderLayout.SOUTH);
+
+//     dialog.setLocationRelativeTo(frame);
+//     dialog.setVisible(true);
+// }
+private void showGameOverDialog() {
     JDialog dialog = new JDialog(frame, "Game Over", true);
 
-    dialog.setSize(350, 220);
+    dialog.setSize(420, 240);
     dialog.setLayout(new BorderLayout());
-    dialog.getContentPane().setBackground(new Color(40, 40, 40));
+    dialog.getContentPane().setBackground(Color.BLACK);
 
-    // ===== TITLE =====
-    JLabel title = new JLabel("💥 GAME OVER 💥", SwingConstants.CENTER);
-
-    title.setFont(new Font("Arial", Font.BOLD, 28));
+    JLabel title = new JLabel("", SwingConstants.CENTER);
+title.setFont(loadDigitalFont(42f));
     title.setForeground(Color.RED);
 
-    // ===== MESSAGE =====
-    JLabel msg = new JLabel(
-        "You stepped on a mine!",
-        SwingConstants.CENTER
-    );
-
-    msg.setFont(new Font("Arial", Font.PLAIN, 18));
+    JLabel msg = new JLabel("YOU STEPPED ON A MINE!", SwingConstants.CENTER);
+   msg.setFont(new Font("Arial", Font.PLAIN, 18));
     msg.setForeground(Color.WHITE);
 
-    // ===== BUTTON =====
-    JButton restart = new JButton("Play Again");
-
-    restart.setFont(new Font("Arial", Font.BOLD, 18));
-
+    JButton restart = new JButton("PLAY AGAIN");
+  restart.setFont(new Font("Arial", Font.BOLD, 18));
+    restart.setBorderPainted(false);
+      restart.setFocusPainted(false);
     restart.addActionListener(e -> {
         dialog.dispose();
         applyDifficulty((String)difficulty.getSelectedItem());
     });
 
-    JPanel center = new JPanel(new GridLayout(2,1));
-    center.setBackground(new Color(40,40,40));
-
+    JPanel center = new JPanel(new GridLayout(2, 1));
+    center.setBackground(Color.BLACK);
     center.add(title);
     center.add(msg);
 
     JPanel south = new JPanel();
-    south.setBackground(new Color(40,40,40));
+    south.setBackground(Color.BLACK);
     south.add(restart);
 
     dialog.add(center, BorderLayout.CENTER);
     dialog.add(south, BorderLayout.SOUTH);
 
+    String text = "GAME OVER";
+    final int[] index = {0};
+
+    javax.swing.Timer textTimer = new javax.swing.Timer(120, e -> {
+        title.setText(text.substring(0, index[0] + 1));
+        index[0]++;
+
+        if (index[0] >= text.length()) {
+            ((javax.swing.Timer)e.getSource()).stop();
+        }
+    });
+
     dialog.setLocationRelativeTo(frame);
+    textTimer.start();
     dialog.setVisible(true);
 }
 
@@ -473,7 +555,7 @@ public class Minesweeper {
     //  REFRESH BOARD  (sync visuals with game model after every move)
     // ══════════════════════════════════════════════════════════════════
     private void refreshBoard() {
-        
+          updateMinesLeftLabel();
         boolean wonNow = false;
 
         for (int i = 0; i < rowNum; i++) {
@@ -504,7 +586,9 @@ if (!c.isFlagged() && !c.isReveald() && !btn.revealed) {
                     if (c.isMine()) {
                         // PAR :
 btn.setText("\uD83D\uDCA3"); // 💣
-btn.setFont(new Font("Segoe UI Emoji", Font.PLAIN, Math.min(24, tileSize - 14)));                  } else {
+btn.setFont(new Font("Segoe UI Emoji", Font.PLAIN, Math.min(24, tileSize - 14))); 
+ explosionLayer.explodeAt(btn);
+} else {
                         int adj = c.getAdjacentMines();
                         if (adj > 0) {
                             btn.setText(String.valueOf(adj));
@@ -540,27 +624,54 @@ btn.setFont(new Font("Courier New", Font.BOLD, Math.min(22, tileSize - 16)));
         if (!gameEnded && game.isGameover()) {
             gameEnded = true;
             gameTimer.stop();
-            revealAllMines();
-            showGameOverDialog();
+          revealAllMinesOneByOne();
         }
     }
 
     // ══════════════════════════════════════════════════════════════════
     //  REVEAL ALL MINES  (called when player loses)
     // ══════════════════════════════════════════════════════════════════
-    private void revealAllMines() {
-        for (int i = 0; i < rowNum; i++) {
-            for (int j = 0; j < colNum; j++) {
-                if (game.getCellule(i, j).isMine()) {
-                    cells[i][j].revealed = true;
-                    cells[i][j].setText("\uD83D\uDCA3"); // 💣
-                 // PAR :
-cells[i][j].setFont(new Font("Segoe UI Emoji", Font.PLAIN, Math.min(24, tileSize - 14)));
-                    cells[i][j].setEnabled(false);
-                    cells[i][j].repaint();
-                    explosionLayer.explodeAt(cells[i][j]);
-                }
+  private void revealAllMinesOneByOne() {
+    List<Cell> minesToReveal = new ArrayList<>();
+
+    for (int i = 0; i < rowNum; i++) {
+        for (int j = 0; j < colNum; j++) {
+            Cellule cellule = game.getCellule(i, j);
+
+            if (cellule.isMine() && !cellule.isReveald()) {
+                minesToReveal.add(cells[i][j]);
             }
         }
     }
+
+    Collections.shuffle(minesToReveal);
+
+    if (minesToReveal.isEmpty()) {
+        showGameOverDialog();
+        return;
+    }
+
+    final int[] index = {0};
+    final javax.swing.Timer[] revealTimer = new javax.swing.Timer[1];
+
+    revealTimer[0] = new javax.swing.Timer(250, e -> {
+        Cell cell = minesToReveal.get(index[0]);
+
+        cell.revealed = true;
+        cell.setText("\uD83D\uDCA3");
+        cell.setFont(new Font("Segoe UI Emoji", Font.PLAIN, Math.min(24, tileSize - 14)));
+        cell.setEnabled(false);
+        cell.repaint();
+        explosionLayer.explodeAt(cell);
+
+        index[0]++;
+
+        if (index[0] >= minesToReveal.size()) {
+            revealTimer[0].stop();
+            showGameOverDialog();
+        }
+    });
+
+    revealTimer[0].start();
+}
 }
