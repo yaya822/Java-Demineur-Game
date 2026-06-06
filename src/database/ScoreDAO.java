@@ -1,14 +1,15 @@
-package database;
+package src.database;
 
-import model.Score;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import src.model.Score;
+
 public class ScoreDAO {
     private static Connection conn=Connexion.getConn();
 
-    // methode pour enregistrer le score apres la victoire 
+    // methode pour enregistrer le score apres la victoire  
     public void saveScore(Score score){
 
         String sql ="INSERT INTO scores(score, time,difficulty) VALUES( ?, ?,?)";
@@ -28,7 +29,7 @@ public class ScoreDAO {
         }
     }
 
-    // methode qui retourne les 10 premier score 
+    // methode qui retourne les 10 premier score  selon la difficulte 
     public List<Score> getTop10Scores(String difficulty ) {
 
         List<Score> scores = new ArrayList<>();

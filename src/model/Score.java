@@ -1,10 +1,10 @@
-package model;
+package src.model;
 
 public class Score {
     private int score;
     private int time ;
     private String difficulty;
-
+    
     public Score(int score, int time,String difficulty) {
         this.score = score;
         this.time = time;

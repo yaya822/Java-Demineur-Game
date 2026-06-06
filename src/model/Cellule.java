@@ -1,11 +1,12 @@
-package model;
+package src.model;
 public class Cellule {
+
         private boolean isMine;
         private boolean isReveald;
         private boolean isFlagged;
         private int adjacentMines;
 
-        public boolean isMine() {
+       public boolean isMine() {
             return isMine;
         }
 
@@ -41,11 +42,12 @@ public class Cellule {
             if(!isReveald && !isFlagged)
                 this.isReveald=true;
         }
+        
         public void toggleFlage(){
             if(!isReveald)
             this.isFlagged=!this.isFlagged;
         }
-
+        // methode pour savoir est ce qu'il s'agit d'une cellule vide (adj==0)
         public boolean isEmpty(){
             return this.adjacentMines==0 && !this.isMine;
         }

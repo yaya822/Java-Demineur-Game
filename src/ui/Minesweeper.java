@@ -1,5 +1,8 @@
-package ui;
-import game.Game;
+package src.ui;
+import src.database.ScoreDAO;
+import src.game.Game;
+import src.model.*;
+
 import java.awt.*;
 import java.io.File;
 import java.awt.event.*;
@@ -7,8 +10,6 @@ import java.util.*;
 import java.util.List;
 import javax.swing.*;
 import javax.swing.border.Border;
-import database.ScoreDAO;
-import model.*;
 
 public class Minesweeper {
 

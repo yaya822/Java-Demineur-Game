@@ -1,4 +1,4 @@
-package database;
+package src.database;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -6,6 +6,7 @@ import java.sql.SQLException;
 
 import javax.swing.JOptionPane;
 
+// classe pour connecter a la base de donnees 
 public class Connexion {
     private static Connection conn=null;
     static{

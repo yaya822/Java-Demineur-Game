@@ -1,5 +1,6 @@
-package model;
+package src.model;
 public class Board {
+
     private Cellule[][] grid;
     private int rows;
     private int cols;
@@ -63,11 +64,11 @@ public class Board {
 
             }
         }
-         for(int r = 0; r < this.rows; r++) {
-        for(int c = 0; c < this.cols; c++) {
-            this.grid[r][c].setAdjacentMines(calculateAdj(r, c));
-        }
-    }
+        for(int r = 0; r < this.rows; r++) {
+            for(int c = 0; c < this.cols; c++) {
+                this.grid[r][c].setAdjacentMines(calculateAdj(r, c));
+            }
+        } 
     }
     //methode qui calcule les nombres des mines qui se trouve a l'entourage d'une cellule
     public int  calculateAdj(int row,int col){
@@ -104,20 +105,8 @@ public class Board {
         return grid[i][j];
     }
 
-      
-
     public boolean isMine(int row,int col){
         return this.grid[row][col].isMine();
-    }
-
-    public boolean checkAllCellaRevealed(){
-        for (int i=0;i<rows;i++){
-            for (int j=0;j<cols;j++){
-                if(!grid[i][j].isReveald() && !grid[i][j].isMine())
-                    return false;
-            }
-        }
-        return true;
     }
     
 }
