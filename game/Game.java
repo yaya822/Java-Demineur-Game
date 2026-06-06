@@ -5,7 +5,7 @@ import model.Cellule;
 public class Game {
     private  Board board;
     private boolean isGameover;
-
+private boolean firstClick = true;
     public Board getBoard() {
         return board;
     }
@@ -19,11 +19,13 @@ public class Game {
         this.isGameover = isGameover;
     }
 
-    public   void start(int rows,int cols,int mines){
-        board=new Board(rows,cols);
-        board.generateMins(mines);
-        board.initializeAdjacency();
-    }
+   public void start(int rows, int cols, int mines) {
+    board = new Board(rows, cols);
+    board.generateMins(mines);
+    board.initializeAdjacency();
+    isGameover = false;
+    firstClick = true;
+}
     
     public boolean checkWin(){
         int revealedCount = 0;
@@ -65,14 +67,43 @@ public class Game {
         }
         return false ;
     }
+    private void makeFirstClickSafe(int row, int col) {
+    Cellule clickedCell = board.getCellule(row, col);
+
+    if (!clickedCell.isMine()) {
+        return;
+    }
+
+    clickedCell.setMine(false);
+
+    int newRow;
+    int newCol;
+
+    do {
+        newRow = (int)(Math.random() * board.getRows());
+        newCol = (int)(Math.random() * board.getCols());
+    } while (
+        (newRow == row && newCol == col) ||
+        board.getCellule(newRow, newCol).isMine()
+    );
+
+    board.getCellule(newRow, newCol).setMine(true);
+    board.initializeAdjacency();
+}
     public void revealCell(int row, int col){
+        
         if(!board.inBounds(row, col)) return;
 
-        Cellule cell = board.getCellule(row, col);
-        if(cell.isReveald() || cell.isFlagged()) return;
-        
-        cell.setReveald(true);
+       Cellule cell = board.getCellule(row, col);
+if (cell.isReveald() || cell.isFlagged()) return;
 
+if (firstClick) {
+    makeFirstClickSafe(row, col);
+    firstClick = false;
+    cell = board.getCellule(row, col);
+}
+
+cell.setReveald(true);
         if(cell.isEmpty()){
            for(int i=-1;i<=1;i++){
                 for(int j=-1;j<=1;j++){

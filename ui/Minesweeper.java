@@ -343,16 +343,22 @@ private Font loadDigitalFont(float size) {
 
         // ── Title bar ───────────────────────────────────────────────
         titlePanel.setLayout(new GridLayout(1, 3));
-        titlePanel.setPreferredSize(new Dimension(boardWidth, 50));
+        titlePanel.setPreferredSize(new Dimension(boardWidth, 70));
         titlePanel.setBackground(gray);
         titlePanel.setBorder(raisedBorder);
         JButton rankingBtn = new JButton(" Top 10");
+        rankingBtn.setText("RANKING");
+rankingBtn.setFont(new Font("Courier New", Font.BOLD, 13));
+rankingBtn.setForeground(Color.BLACK);
+rankingBtn.setBackground(new Color(230, 230, 230));
+rankingBtn.setFocusPainted(false);
+rankingBtn.setBorder(raisedBorder);
+rankingBtn.setPreferredSize(new Dimension(95, 24));
         rankingBtn.addActionListener(e->showRankingDialog());
         difficulty.setFont(retro);
         difficulty.setBackground(gray);
         difficulty.setBorder(raisedBorder);
         JPanel dp = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 8));
-        dp.add(rankingBtn);
         dp.setBackground(gray);
         dp.add(difficulty);
 
@@ -363,9 +369,20 @@ private Font loadDigitalFont(float size) {
         mineCountLabel.setPreferredSize(new Dimension(150, 30));
         mineCountLabel.setBorder(loweredBorder);
         mineCountLabel.setText("\uD83D\uDCA3 " + minesLeft);
-        JPanel mp = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 8));
-        mp.setBackground(gray);
-        mp.add(mineCountLabel);
+      JPanel mp = new JPanel();
+mp.setLayout(new BoxLayout(mp, BoxLayout.Y_AXIS));
+mp.setBackground(gray);
+
+JPanel rankingPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 2));
+rankingPanel.setBackground(gray);
+rankingPanel.add(rankingBtn);
+
+JPanel minesPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 0));
+minesPanel.setBackground(gray);
+minesPanel.add(mineCountLabel);
+
+mp.add(rankingPanel);
+mp.add(minesPanel);
 
        timerLabel.setFont(loadDigitalFont(28f));
         timerLabel.setOpaque(true);
@@ -473,7 +490,7 @@ default       -> { rowNum = 14; colNum = 14; tileSize = 40; minesLeft = 25; }
         // Update header labels
         updateMinesLeftLabel();
         timerLabel.setText("00:00");
-        titlePanel.setPreferredSize(new Dimension(boardWidth, 50));
+        titlePanel.setPreferredSize(new Dimension(boardWidth, 70));
 
         // Rebuild cells
         buildBoard();
@@ -487,55 +504,7 @@ default       -> { rowNum = 14; colNum = 14; tileSize = 40; minesLeft = 25; }
         explosionLayer.clear();
         frame.setLocationRelativeTo(null);
     }
-//     private void showGameOverDialog() {
 
-//     JDialog dialog = new JDialog(frame, "Game Over", true);
-
-//     dialog.setSize(350, 220);
-//     dialog.setLayout(new BorderLayout());
-//     dialog.getContentPane().setBackground(new Color(40, 40, 40));
-
-//     // ===== TITLE =====
-//     JLabel title = new JLabel("💥 GAME OVER 💥", SwingConstants.CENTER);
-
-//     title.setFont(new Font("Arial", Font.BOLD, 28));
-//     title.setForeground(Color.RED);
-
-//     // ===== MESSAGE =====
-//     JLabel msg = new JLabel(
-//         "You stepped on a mine!",
-//         SwingConstants.CENTER
-//     );
-
-//     msg.setFont(new Font("Arial", Font.PLAIN, 18));
-//     msg.setForeground(Color.WHITE);
-
-//     // ===== BUTTON =====
-//     JButton restart = new JButton("Play Again");
-
-//     restart.setFont(new Font("Arial", Font.BOLD, 18));
-
-//     restart.addActionListener(e -> {
-//         dialog.dispose();
-//         applyDifficulty((String)difficulty.getSelectedItem());
-//     });
-
-//     JPanel center = new JPanel(new GridLayout(2,1));
-//     center.setBackground(new Color(40,40,40));
-
-//     center.add(title);
-//     center.add(msg);
-
-//     JPanel south = new JPanel();
-//     south.setBackground(new Color(40,40,40));
-//     south.add(restart);
-
-//     dialog.add(center, BorderLayout.CENTER);
-//     dialog.add(south, BorderLayout.SOUTH);
-
-//     dialog.setLocationRelativeTo(frame);
-//     dialog.setVisible(true);
-// }
 private void showGameOverDialog() {
     JDialog dialog = new JDialog(frame, "Game Over", true);
 
@@ -655,8 +624,7 @@ btn.setFont(new Font("Courier New", Font.BOLD, Math.min(22, tileSize - 16)));
             gameEnded = true;
             gameTimer.stop();
 
-            JOptionPane.showMessageDialog(frame,
-                "🎉 You win! Time: " + timerLabel.getText());
+            showWinDialog(seconds);
             int finalScore=score-seconds;
             int finaltime=seconds;
 
@@ -718,5 +686,83 @@ btn.setFont(new Font("Courier New", Font.BOLD, Math.min(22, tileSize - 16)));
     });
 
     revealTimer[0].start();
+}
+private void showWinDialog(int time) {
+    JDialog dialog = new JDialog(frame, "You Win!", true);
+    dialog.setSize(480, 300);
+    dialog.setLayout(new BorderLayout(0, 10));
+    dialog.getContentPane().setBackground(Color.BLACK);
+
+    // ── Animated "YOU WIN!" title ──────────────────────────────
+    JLabel title = new JLabel("", SwingConstants.CENTER);
+    title.setFont(loadDigitalFont(46f));
+    title.setForeground(new Color(255, 215, 0));   // gold
+
+    // ── Trophy + congrats ──────────────────────────────────────
+    JLabel trophy = new JLabel("\uD83C\uDFC6 CONGRATULATIONS! \uD83C\uDFC6",
+                               SwingConstants.CENTER);
+    trophy.setFont(new Font("Segoe UI Emoji", Font.BOLD, 17));
+    trophy.setForeground(new Color(255, 215, 0));
+
+    // ── Time display ───────────────────────────────────────────
+    String timeStr = String.format("%02d:%02d", time / 60, time % 60);
+    JLabel timeDisplay = new JLabel(" TIME : " + timeStr,
+                                    SwingConstants.CENTER);
+                                    
+    timeDisplay.setFont(new Font("Courier New", Font.BOLD, 20));
+    timeDisplay.setForeground(new Color(0, 220, 80));   // green
+
+    JPanel center = new JPanel(new GridLayout(3, 1, 0, 6));
+    center.setBackground(Color.BLACK);
+    center.setBorder(BorderFactory.createEmptyBorder(15, 20, 5, 20));
+    center.add(title);
+    center.add(trophy);
+    center.add(timeDisplay);
+
+    // ── PLAY AGAIN button ──────────────────────────────────────
+    JButton restart = new JButton("PLAY AGAIN");
+    restart.setFont(new Font("Arial", Font.BOLD, 16));
+    restart.setOpaque(true);
+    restart.setBackground(new Color(255, 215, 0));   // gold background
+    restart.setForeground(Color.BLACK);
+    restart.setBorderPainted(false);
+    restart.setFocusPainted(false);
+    restart.setPreferredSize(new Dimension(160, 38));
+    restart.addActionListener(e -> {
+        dialog.dispose();
+        applyDifficulty((String) difficulty.getSelectedItem());
+    });
+
+    JPanel south = new JPanel();
+    south.setBackground(Color.BLACK);
+    south.setBorder(BorderFactory.createEmptyBorder(0, 0, 12, 0));
+    south.add(restart);
+
+    dialog.add(center, BorderLayout.CENTER);
+    dialog.add(south,  BorderLayout.SOUTH);
+    dialog.setLocationRelativeTo(frame);
+
+    // ── Typewriter animation on "YOU WIN!" ─────────────────────
+    String text = "YOU WIN!";
+    final int[] idx = {0};
+    javax.swing.Timer typewriter = new javax.swing.Timer(90, e -> {
+        title.setText(text.substring(0, idx[0] + 1));
+        idx[0]++;
+        if (idx[0] >= text.length()) {
+            ((javax.swing.Timer) e.getSource()).stop();
+
+            // Blink gold ↔ white after typing finishes
+            final boolean[] toggle = {false};
+            new javax.swing.Timer(450, blink -> {
+                title.setForeground(toggle[0]
+                    ? new Color(255, 215, 0)
+                    : Color.WHITE);
+                toggle[0] = !toggle[0];
+            }).start();
+        }
+    });
+
+    typewriter.start();
+    dialog.setVisible(true);
 }
 }
