@@ -1,6 +1,6 @@
-package src.game;
-import src.model.Board;
-import src.model.Cellule;
+package game;
+import model.Board;
+import model.Cellule;
 
 public class Game {
 

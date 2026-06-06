@@ -1,3 +1,11 @@
 {
-    "java.debug.settings.onBuildFailureProceed": true
+    "java.project.sourcePaths": [
+        "src"
+    ],
+    "java.project.outputPath": "bin",
+    "java.debug.settings.onBuildFailureProceed": false,
+    "code-runner.runInTerminal": true,
+    "code-runner.executorMap": {
+        "java": "cd $workspaceRoot && javac -d bin src\\App.java src\\ui\\Minesweeper.java src\\game\\Game.java src\\database\\Connexion.java src\\database\\ScoreDAO.java src\\model\\Board.java src\\model\\Cellule.java src\\model\\Score.java && java -cp \"bin;src\" App"
+    }
 }

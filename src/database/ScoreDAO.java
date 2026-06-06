@@ -1,10 +1,10 @@
-package src.database;
+package database;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import src.model.Score;
+import model.Score;
 
 public class ScoreDAO {
     private static Connection conn=Connexion.getConn();
